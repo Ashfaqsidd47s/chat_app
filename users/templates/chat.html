@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chat_app by mohammad ashfaq</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link rel="stylesheet" href="../../static/css/main.css">
+    <style>
+        :root{
+            --normal-bg: #eefef8;
+            --primary:#44B78B ;
+            --primary-forground: ;
+            --card: #c3dcd3;
+            --card-forground: ;
+            --popover: #a3c9bc;
+            --popover-forground: ;
+        }
+        body { 
+            margin: 0;
+            padding: 0;
+            font-family: sans-serif;
+            scrollbar-width: thin;
+            scrollbar-color: lightgray transparent;
+
+            a{
+                text-decoration: none;
+            }
+        }
+        .center-content{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        main{
+            flex: none;
+            display: flex;
+            height: 100vh;
+            width: 90%;
+            background: var(--normal-bg);
+            position: relative;
+            z-index: 1;
+        }
+
+        .left-bar {
+            flex: 3;
+            background: var(--card);
+            z-index: 4;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .chat{
+            flex: 7;
+            margin-top: 70px;
+            height: (100vh - 70px);
+            padding: 0.5rem;
+            position: relative;
+            display: none;
+        }
+        .no-chat{
+            flex: 7;
+            margin-top: 70px;
+            height: (100vh - 70px);
+            padding: 0.5rem;
+            text-align: center;
+            h1{
+                margin: 0;
+            }
+        }
+        .right-bar{
+            flex: 2;
+            background: var(--card);
+        }
+        nav{
+            background: var(--popover);
+            position: absolute;
+            width: calc(100% - 2rem);
+            height: 55px;
+            top: 0px;
+            left: 0px;
+            padding: 0.5rem 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 3;
+        }
+        .nav-left{
+            flex: 3;
+        }
+        .nav-center{
+            flex: 3;
+            font-size: large;
+        }
+        .nav-right{
+            text-decoration: none;
+            width: 100px;
+            height: 40px;
+            border-radius: 0.25rem;
+            border: none;
+            font-weight: 500;
+            background: whitesmoke;
+        }
+        .left-bar-togle{
+            background: var(--popover);
+            padding: 0px 0.5rem;
+            flex-direction: row;
+            justify-content: start;
+            gap: 4px;
+            height: 71px;
+            font-weight: 600;
+            .user-img{
+                flex: none;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background: white;
+                z-index: 1;
+                img{
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    object-position: center;
+                }
+
+            }
+        }
+        #user-list{
+            margin: 0;
+            width: calc(100% - 1rem);
+            height: calc(100vh - 200px);
+            overflow-y: auto;
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            cursor: pointer;
+            
+            :hover{
+                background: var(--normal-bg);
+            }
+
+        }
+        .logout-box{
+            padding: 0.5rem;
+            border-top: 1px solid var(--primary);
+            margin-bottom: 1rem;
+            a{
+                text-decoration: none;
+                background: whitesmoke;
+                width: 100px;
+                height: 40px;
+                border-radius: 0.25rem;
+                border: none;
+                font-weight: 500;
+            }
+        }
+        .conversation-item {
+            width: calc(100% - 1rem);
+            padding: 0.5rem;
+            background: var(--popover);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-radius: 0.25rem;
+            
+            .user-img{
+                flex: none;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background: var(--normal-bg);
+                position: relative;
+                z-index: 1;
+                img{
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    object-position: center;
+                }
+
+            }
+            .online::before{
+                content: "";
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                
+                position: absolute;
+                bottom: 2px;
+                right: 3px;
+                background: rgb(38, 194, 38);
+                z-index: 5;
+            }
+
+            .conversation-info{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                h3{
+                    padding: 0;
+                    margin: 0;
+                }
+                p{
+                    padding: 0;
+                    margin: 0;
+                    font-size: small;
+                }
+            }
+        }
+        .chat-headder{
+            padding: 0.2rem 1rem;
+            background: var(--card);
+            width: calc(100% - 2rem);
+            border-left: 1px solid var(--primary);
+            border-right: 1px solid var(--primary);
+            height: 45px;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .chat-messages{
+            margin-top: 42px;
+            height: calc(100vh - 190px);
+            background: var(--normal-bg);
+            overflow-y: scroll;
+            display: flex;
+            flex-direction: column;
+            align-items: start;
+            gap: 2px;
+        }
+        .chat-input{
+            padding: 0.5rem;
+            width: calc(100% - 1rem);
+            border: 1px solid var(--primary);
+            border-radius: 0.25rem;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+
+            input{
+                width: calc(100% - 90px);
+                padding: 5px;
+                height: 35px;
+                border: none;
+                border-radius: 0.25rem;
+                font-size: large;
+            }
+            
+            input:focus{
+                outline: var(--primary) 2px solid;
+            }
+            button{
+                background: var(--primary);
+                padding: 0.25rem;
+                width: 80px;
+                height: 45px;
+                border: none;
+                border-radius: 0.25rem;
+            }
+        }
+
+        .message-item{
+            padding: 0.25rem;
+            max-width: 60%;
+            display: flex;
+            align-items: start;
+            gap: 0.5rem;
+            
+            .user-img{
+                flex: none;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                background: white;
+                img{
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    object-position: center;
+                }
+
+            }
+            .message-data{
+                background: var(--card);
+                padding: 0.5rem;
+                border-radius: 0.25rem;
+                display: flex;
+                flex-direction: column;
+                align-items: start;
+                h4{
+                    margin: 0;
+                    font-size: small;
+                }
+                p{
+                    margin: 0;
+                }
+                
+            }
+        }
+        .self-message-item {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+
+            .message-data{
+                background: var(--popover);
+                align-items: end;
+            }
+        }
+        #typing{
+            align-items: end;
+            display: none;
+        }
+
+        
+        ::-webkit-scrollbar-track {
+            background: transparent;
+            border-radius: 1rem;
+        }
+        @media (min-width: 992px) and (max-width: 1600px) {
+            main {
+                width: 90%;
+            }
+        }
+        @media (min-width: 700px) and (max-width: 767px) {
+            main {
+                width: 80%;
+            }
+            .right-bar{
+                display: none;
+            }
+            
+        }
+        @media (min-width: 600px) and (max-width: 700px) {
+            main {
+                width: 100%;
+            }
+            .right-bar{
+                display: none;
+            }
+        }
+        @media (max-width: 600px) {
+            main {
+                width: 100%;
+            }
+            .left-bar{
+                position: absolute;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                width: 80px;
+                overflow-x: hidden;
+                .left-bar-togle{
+                    justify-content: center;
+                    p{
+                        display: none;
+                    }
+                }
+                a{
+                    width: 100%;
+                }
+                .conversation-info{
+                    display: none;
+                }
+            }
+            .chat{
+                flex: none;
+                width: calc(100% - 100px);
+                margin-left: 80px;
+            }
+            .right-bar{
+                display: none;
+            }
+        }
+
+        .typing {
+            display: flex;
+            align-items: end;
+            gap: 5px;
+        }
+        .dot {
+            width: 8px;
+            height: 8px;
+            background-color: rgb(2, 211, 47);
+            border-radius: 50%;
+            animation: typing-wave 1.5s infinite ease-in-out;
+        }
+        .dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+        .dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+        @keyframes typing-wave {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+</head>
+<body class="center-content">
+    <main>
+        <nav>
+            <div class="nav-left"></div>
+            <h1 class="nav-center">CHAT APP </h1>
+            <a href="{% url 'logout' %}" class="nav-right center-content">Logout</a>
+        </nav>
+        <div id="left-bar" class="left-bar">
+            <div class="left-bar-togle center-content" onclick="handelColaps()">
+                <div class="center-content user-img">
+                    <img src="https://avatar.iran.liara.run/username?username={{ user_name }}" alt="">
+                </div>
+                <p>{{user_name}}</p>
+            </div>
+            <ul id="user-list" type="none" >
+                {% for user in users %}
+                    <li class="conversation-item" id={{user.id}} onclick="loadConversation('{{ user.id }}')">
+                        <div class="center-content user-img">
+                            <img src="https://avatar.iran.liara.run/username?username={{user.name}}" alt="">
+                        </div>
+                        <div class="conversation-info">
+                            <h3>{{ user.name }}</h3>
+                            <p>{{ user.email}}</p>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <div class="logout-box center-content">
+                <a class="center-content" href="{% url 'logout' %}">Logout</a>
+            </div>
+        </div>
+        <div class="no-chat center-content">
+            <h1>I hope you will like this </h1>
+            <p>Select a person for starting a conversation with him...</p>
+            <p>Try opening multiple accounts you will see all live notified correctly</p>
+        </div>
+        <div class="chat">
+            <div class="chat-headder">
+                <div class="message-item">
+                    <div class="center-content user-img">
+                        <img src="https://avatar.iran.liara.run/username?username=user" alt="">
+                    </div>
+                    <div class="message-data" >
+                        <h4 id="headderName"></h4>
+                    </div>
+                </div>
+            </div>
+            <div id="chat-messages" class="chat-messages"></div>
+            <div class="chat-input">
+                <input onclick="sendTypingMsg()" onblur="sendNotTypingMsg()"  type="text" id="message-input" placeholder="Type your message...">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+        <div class="right-bar">
+            right bar
+        </div>
+    </main>
+    
+    <script>
+        // for styling and thing
+        let isColapsing = false;
+        const handelColaps = ()=>{
+            console.log("colapsing")
+            isColapsing = !isColapsing
+            if(isColapsing) {
+                $("#left-chat-list").css("display", "none")
+                $("#left-chat-list").css("display", "none")
+            } else {
+                $("#left-chat-list").css("display", "block")
+            }
+        }
+    </script>
+    <script>
+        // for handeling websockets
+        let currentConversationId = null;
+        let userId = `{{ user_id }}`;
+        let userName = `{{ user_name }}`;
+        let liveUsers = [];
+        let connected = false;
+        let isTyping = false
+        const url = 'ws://' + window.location.host + '/ws/chat/root/'
+        // Connect to the WebSocket
+        const chatSocket = new WebSocket(url);
+
+
+        function loadConversation(id) {
+            senderId = id
+            $.ajax({
+                url: `/get_or_create_conversation/${id}/`,
+                method: 'GET',
+                success: function(response) {
+                    $(".no-chat").css("display", "none")
+                    $(".chat").css("display", "block")
+                    currentConversationId = response.conversation_id;
+                    const chatMessages = response.messages;
+                    let otherName = ""
+                    const olderMessages = $('#chat-messages');
+                    olderMessages.empty();
+                    chatMessages.forEach((message) => {
+                        if(otherName == "" && message.sender != userName) otherName = message.sender;
+                        olderMessages.append(`
+                            <div class="message-item ${ Boolean(message.self) ? "self-message-item" : ""}">
+                                <div class="center-content user-img">
+                                    <img src="https://avatar.iran.liara.run/username?username=${message.sender}" alt="">
+                                </div>
+                                <div class="message-data">
+                                    <h4>${message.sender}:</h4> 
+                                    <p>
+                                        ${message.data}
+                                    </p>
+                                </div>
+                            </div>
+                        `);
+                    });
+                    const headderName = $("#headderName").html(otherName);
+                    olderMessages.append(`
+                        <div id="typing" class="message-item">
+                            <div class="center-content user-img">
+                                <img src="https://avatar.iran.liara.run/username?username=${otherName}" alt="">
+                            </div>
+                            <div class="typing" >
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                            </div>
+                        </div>
+                    `);
+
+                    scrollBottom()
+
+                    chatSocket.send(JSON.stringify({
+                        type: "join_conversation",
+                        payload: {
+                            user_id: userId,
+                            user_name: userName,
+                            conversation_id: currentConversationId
+                        }
+                    }))
+                }
+            });
+
+        }
+        
+        chatSocket.onopen = () => {
+            console.log("webosocket connected")
+            connected = true;
+            $("#user-title").css("color", "green")
+            
+        }
+        chatSocket.onmessage = function (e) {
+            const data = JSON.parse(e.data);
+            switch (data.type) {
+                case "list": 
+                    data.users.forEach((id) => {
+                        $("#" + id).children(".user-img").addClass("online");
+                    });
+                    break;
+                case "normal":
+                    console.log(data)
+                    const messages = $('#chat-messages');
+                    messages.append(`
+                        <div class="message-item ${ data.user_id == userId ? "self-message-item" : ""}">
+                            <div class="center-content user-img">
+                                <img src="https://avatar.iran.liara.run/username?username=${data.user_name}" alt="">
+                            </div>
+                            <div class="message-data">
+                                <h4>${data.user_name}:</h4> 
+                                <p>
+                                    ${data.content}
+                                </p>
+                            </div>
+                        </div>
+                    `);
+                    scrollBottom()
+                    break;
+                case "online": 
+                    liveUsers.push(data.user_id)
+                    $("#" + data.user_id).children(".user-img").addClass("online");
+                    break;
+                case "offline": 
+                    liveUsers.pop(data.user_id)
+                    $("#" + data.user_id).children(".user-img").removeClass("online");
+                    break;
+                case "typing": 
+                    isTyping = true;
+                    if(data.user_id != userId){
+                        $("#typing").css("display", "flex")
+                        scrollBottom()
+                    }
+                    break;
+                case "not_typing": 
+                    isTyping = false;
+                    $("#typing").css("display", "none")
+                    break;
+            
+                default:
+                    break;
+            }
+        };
+    
+        chatSocket.onclose = function (e) {
+            console.log("disconnected")
+            connected = false;
+            $("#user-title").css("color", "gray")
+        };
+
+        function sendMessage() {
+            const message = $('#message-input').val();
+            if (!message) return;
+
+            chatSocket.send(JSON.stringify({
+                type: "send_message",
+                payload: {
+                    user_id: userId,
+                    conversation_id: currentConversationId,
+                    message_content: message,
+                    user_name: userName
+                }
+            }))
+            $('#message-input').val("");
+            console.log("message sent")
+        }
+
+        function sendTypingMsg() {
+            chatSocket.send(JSON.stringify({
+                type: "typing",
+                payload: {
+                    user_id: userId,
+                    user_name: userName,
+                    conversation_id: currentConversationId,
+                }
+            }))
+        }
+
+        function sendNotTypingMsg() {
+            chatSocket.send(JSON.stringify({
+                type: "not_typing",
+                payload: {
+                    user_id: userId,
+                    user_name: userName,
+                    conversation_id: currentConversationId,
+                }
+            }))
+        }
+
+        function scrollBottom() {
+            const chatMessages = $('#chat-messages');
+            const height = document.getElementById("chat-messages").scrollHeight;
+            chatMessages.scrollTop(height)
+        }
+
+        // incase we might use it if websoket is not woking 
+        function sendMessageToDB() {
+            const message = $('#message-input').val();
+            if (!message || !currentConversationId) return;
+
+            $.ajax({
+                url: '/users/send_message/',
+                method: 'POST',
+                data: {
+                    conversation_id: currentConversationId,
+                    message: message,
+                    csrfmiddlewaretoken: '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    $('#chat-messages').append(`<div><strong>${response.sender}:</strong> ${response.data}</div>`);
+                    $('#message-input').val('');
+                }
+            });
+        }
+
+
+
+    </script>
+</body>
+</html>

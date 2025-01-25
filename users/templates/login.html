@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Login</title>
+    <style>
+        :root{
+            --normal-bg: #eefef8;
+            --primary:#44B78B ;
+            --primary-forground: ;
+            --card: #c3dcd3;
+            --card-forground: ;
+            --popover: #a3c9bc;
+            --popover-forground: ;
+        }
+        body{
+            font-family: sans-serif;
+            a{
+                color: var(--primary);
+                font-weight: 600;
+            }
+        }
+        .login-container {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        form{
+            width: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: var(--card);
+            padding: 1rem;
+            border-radius: 0.25rem;
+
+            input{
+                margin-bottom: 0.6rem;
+                width: calc(100% - 0.6rem);
+                padding: 0.3rem;
+                height: 30px;
+                border-radius: 0.25rem;
+                border: none;
+            }
+            input:focus{
+                outline: 2px solid var(--primary);
+            }
+            button{
+                margin-bottom: 1rem;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                width: 100%;
+                height: 40px;
+                background: var(--primary);
+                border: none;
+                border-radius: 0.25rem;
+                font-size: large;
+            }
+            ul{
+                margin: 0;
+                padding: 0;
+                height: 16px;
+                text-align: center;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                li{
+                    margin: 0;
+                    padding: 0;
+                    color: gray;
+                }
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="login-container">
+
+        <form method="post">
+            <h1>Login</h1>
+            {% csrf_token %}
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+                <ul type="none">
+                {% if messages %}
+                    {% for message in messages %}
+                    <li>{{message}}</li>
+                    {% endfor %}
+                {% endif %}
+                </ul>
+            <button type="submit">Login</button>
+            <p>Don't have an account <a href="{% url 'register' %}">Register here.</a></p>
+        </form>
+    </div>
+</body>
+</html>

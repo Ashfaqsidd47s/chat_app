@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>chat app home</title>
+    <style>
+        :root {
+            --normalbg: #eefef8;
+            --primary:#44B78B ;
+            --card: #c3dcd3;
+            --popover: #a3c9bc;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: var(--normalbg);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .navbar {
+            position: sticky;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: var(--popover);
+            color: white;
+            padding: 0;
+            text-align: center;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .nav-right{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100px;
+            height: 40px;
+            border-radius: 0.25rem;
+            background: var(--primary);
+            text-decoration: none;
+            color: black;
+            margin: 0px 0.5rem;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .left-menu {
+            background-color: var(--card);
+            width: 280px;
+            transition: width 0.3s ease;
+            overflow: hidden;
+            min-width: 86px;
+        }
+
+        .left-menu.collapsed {
+            width: 80px;
+            .conversation-info{
+                display: none;
+            }
+        }
+        #user-list{
+            margin: 0;
+            width: calc(100% - 1rem);
+            height: calc(100vh - 200px);
+            overflow-y: auto;
+            padding: 0.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            cursor: pointer;
+            
+            :hover{
+                background: var(--normalbg);
+            }
+            
+        }
+        .logout-box{
+            padding: 0.5rem;
+            border-top: 1px solid var(--primary);
+            margin-bottom: 1rem;
+            a{
+                text-decoration: none;
+                background: whitesmoke;
+                width: 100px;
+                height: 40px;
+                border-radius: 0.25rem;
+                border: none;
+                font-weight: 500;
+            }
+        }
+        .conversation-item {
+            width: calc(100% - 1rem);
+            padding: 0.5rem;
+            background: var(--popover);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-radius: 0.25rem;
+            
+            .user-img{
+                flex: none;
+                width: 50px;
+                height: 50px;
+                border-radius: 50%;
+                background: var(--normal-bg);
+                position: relative;
+                z-index: 1;
+                img{
+                    width: 100%;
+                    height: 100%;
+                    object-fit: cover;
+                    object-position: center;
+                }
+                
+            }
+            .online::before{
+                content: "";
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                
+                position: absolute;
+                bottom: 2px;
+                right: 3px;
+                background: rgb(38, 194, 38);
+                z-index: 5;
+            }
+            
+            .conversation-info{
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                h3{
+                    padding: 0;
+                    margin: 0;
+                }
+                p{
+                    padding: 0;
+                    margin: 0;
+                    font-size: small;
+                }
+            }
+        }
+        
+        .toggle-button {
+            cursor: pointer;
+            width: calc(300px - 2rem);
+            height: 50px;
+            padding: 0px 1rem;
+            border: none;
+            margin: 0.5rem;
+            background-color: var(--card);
+            z-index: 200;
+            transition: width 0.3s ease;
+
+            .user-img{
+                width: 40px;
+                height: 40px;
+            }
+        }
+        .toggle-button.collapsed{
+            width: calc(80px - 1rem);
+            padding: 0.5rem;
+            .conversation-info{
+                display: none;
+            }
+        }
+
+        .main-content {
+            padding: 1rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            text-align: center;
+            h1{
+                margin: 0;
+                font-size: 3rem;
+            }
+            p{
+                margin: 0;
+            }
+        }
+        .main-content p:nth-child(2){
+            color: var(--primary);
+            font-weight: 600;
+
+            
+        }
+        .action-button {
+                width: 200px;
+                height: 60px;
+                border-radius: 0.5rem;
+                background: var(--primary);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                text-decoration: none;
+                color: black;
+                font-size: x-large;
+            }
+
+        .right-panel {
+            background-color: var(--card);
+            width: 200px;
+            padding: 1rem;
+        }
+
+        .footer {
+            background-color: var(--popover);
+            color: white;
+            text-align: center;
+            padding: 1rem;
+        }
+        @media (min-width: 992px) and (max-width: 1600px) {
+            .hero { 
+                width: 90%;
+             }
+        }
+        @media (min-width: 700px) and (max-width: 767px) {
+            .hero {
+                width: 80%;
+            }
+        }
+
+        @media (min-width: 600px) and (max-width: 700px) {
+            .hero { 
+                width: 75%;
+            }
+            .toggle-button{
+                left: 12.5%;
+             }
+        }
+
+        @media (max-width: 600px) {
+            .hero { 
+                width: 50%;
+            }
+            .conversation-item{
+                .conversation-info{
+                    display: none;
+                }
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    <section class="hero">
+        <nav class="navbar">
+            <button id="toggle-button" class="conversation-item toggle-button"  onclick="toggleMenu()">
+                <div class="center-content user-img">
+                    <img src="https://avatar.iran.liara.run/username?username={{user_name}}" alt="">
+                </div>
+                <div class="conversation-info">
+                    <h3>{{ user_name }}</h3>
+                </div>
+            </button>
+            <a href="{% url 'logout' %}" class="nav-right center-content">Logout</a>
+        </nav>
+        <div class="container">
+            <div class="left-menu" id="leftMenu">
+                
+                <ul id="user-list" type="none" >
+                    {% for user in users %}
+                        <li class="conversation-item" id={{user.id}} onclick="loadConversation('{{ user.id }}')">
+                            <div class="center-content user-img">
+                                <img src="https://avatar.iran.liara.run/username?username={{user.name}}" alt="">
+                            </div>
+                            <div class="conversation-info">
+                                <h3>{{ user.name }}</h3>
+                                <p>{{ user.email}}</p>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="main-content">
+                <h1>Hello Everyone...</h1>
+                <p>created by - mohammad ashfaq</p>
+                <p>this page might look bad at small width because I have applied the <strong> 50% as per instructions</strong></p>
+                <p>so i have build chat app sepreately similar but responsive for mobile device as well</p>
+                <a class="action-button" href="{% url 'chat' %}"> chats</a>
+            </div>
+            <div class="right-panel">Right Panel</div>
+        </div>
+        <div class="footer">Footer</div>
+    </section>
+    <script>
+        function toggleMenu() {
+            const menu = document.getElementById('leftMenu');
+            const toggle = document.getElementById('toggle-button');
+            menu.classList.toggle('collapsed');
+            toggle.classList.toggle("collapsed")
+        }
+    </script>
+</body>
+</html>
