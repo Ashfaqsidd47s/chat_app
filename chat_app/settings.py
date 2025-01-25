@@ -138,6 +138,11 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 # Channels layer
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels.layers.InMemoryChannelLayer',
-    }
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [
+                "rediss://red-cuaj30rqf0us73c9lmsg:RwMWL7d8ORaq5cle3NJc5GoWbQEEcMHG@oregon-redis.render.com:6379"
+            ],  # Replace with your Redis server host and port
+        },
+    },
 }
