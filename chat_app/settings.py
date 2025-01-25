@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-gdgio^6rpsbh0w(b09+p**#f9b#zo$#ghtwm6-n!dh%igd$0q@'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['chat-app-ic4v.onrender.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
