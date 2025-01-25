@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-gdgio^6rpsbh0w(b09+p**#f9b#zo$#ghtwm6-n!dh%igd$0q@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['chat-app-ic4v.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['chat-app-ic4v.onrender.com', 'localhost', '127.0.0.1/']
 
 
 # Application definition
@@ -138,11 +138,6 @@ SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 # Channels layer
 CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [
-                "rediss://red-cuaj30rqf0us73c9lmsg:RwMWL7d8ORaq5cle3NJc5GoWbQEEcMHG@oregon-redis.render.com:6379"
-            ],  # Replace with your Redis server host and port
-        },
-    },
+        'BACKEND': 'channels.layers.InMemoryChannelLayer',
+    }
 }
